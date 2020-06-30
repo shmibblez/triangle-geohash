@@ -4,15 +4,17 @@
   "description": "triangle-geohash was created with the ability to sort firestore queries that also include location in mind. It's the same concept as geohash except with triangles. The first level is split into an icosahedron, and each sub triangle is split into 4 triangles, and resolution can be improved by going into a triangle's sub triangles. Search by location is performed by first finding the nearest triangle point and then finding all triangles around it to form a hexagon, and those hashes are returned and can be used with an array-contains-any query. The second part still needs to be done, but getting a location hash works.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib/**/*"],
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "src/tests/test.ts",
     "build": "tsc",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
+    "version": "npm run lint && git add -A src",
     "postversion": "git push && git push --tags"
   },
   "repository": {
@@ -31,6 +33,10 @@
   },
   "homepage": "https://github.com/shmibblez/triangle-geohash#readme",
   "devDependencies": {
+    "tslint": "^6.1.2",
     "typescript": "^3.9.5"
+  },
+  "dependencies": {
+    "@types/node": "^14.0.14"
   }
 }
