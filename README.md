@@ -12,7 +12,7 @@ import { TriangleGeohash } from 'triangle-geohash';
 ```
 const lat = 27
 const lon = -71
-const depth = TriangleGeohash.Depths.km440 // (4)
+const depth = TriangleGeohash.Depths.km440 // depth 4
 ```
 **then, you can either get the deepest hash**
 ```
