@@ -140,7 +140,6 @@ export class Triangle {
         const BCVec = BVec.subtract(CVec);
 
         const area = ABVec.crossProduct(BCVec).getMagnitude() / 2;
-        console.log('tri area: ' + area);
 
         return area;
     }
