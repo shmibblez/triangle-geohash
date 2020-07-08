@@ -1,7 +1,7 @@
 {
   "name": "triangle-geohash",
   "version": "0.0.1",
-  "description": "triangle-geohash is pretty much geohash but with triangles. The earth is split into an icosahedron, and each one of those triangles is split into 4 sub triangles. Hashes are formatted in the following way: [primary triangle number]|[sub triangle numbers], so for example, the triangle geohash for the bermuda triangle, coordinates (27,-71), with depth 12, would be '15|222223334412', creepy huh?",
+  "description": "triangle-geohash is pretty much geohash but with triangles. Earth is split into an icosahedron, and each one of those triangles is split into 4 sub triangles. Hashes are formatted in the following way: [primary triangle number]|[sub triangle numbers], so for example, the triangle geohash for the bermuda triangle, coordinates (27,-71), with depth 12, would be '15|222223334412', creepy huh?",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
