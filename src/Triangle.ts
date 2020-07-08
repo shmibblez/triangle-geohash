@@ -1,5 +1,8 @@
 import { Point } from './Point';
 import { Vector } from './Vector';
+import { Utilz } from './Utilz';
+import { inspect } from 'util';
+
 
 /**
  * defines a triangle
@@ -23,7 +26,7 @@ export class Triangle {
     C: Point;
     pos: number;
     direction: number;
-    center!:Point;
+    center!: Point;
     aMidpoint!: Point;
     bMidpoint!: Point;
     cMidpoint!: Point;
@@ -35,7 +38,7 @@ export class Triangle {
     static get DOWN() {
         return -1;
     }
-    // params are points
+
     constructor(A: Point, B: Point, C: Point, pos = -1) {
         this.A = A;
         this.B = B;
@@ -72,38 +75,6 @@ export class Triangle {
         return subTriangles;
     }
 
-    static getSubTriangles(triangleArr: Triangle[], depth: number): Triangle[] {
-        if (depth == 0) {
-            console.log('depth is 0, returning');
-            return [];
-        }
-
-        let triangles: Triangle[] = [];
-        for (const triangle of triangleArr) {
-            triangles = triangles.concat(triangle.generateSubTriangles());
-        }
-        return triangles.concat(this.getSubTriangles(triangles, depth - 1));
-    }
-
-    /**
-     * only used for drawing triangles
-     */
-    static getOnlyDeepestSubTriangles(triangleArr: Triangle[], depth: number): Triangle[] {
-        if (depth == 0) {
-            // print('depth is 0, returning');
-            return triangleArr;
-        }
-        if (!Array.isArray(triangleArr))
-            throw new Error('array required as first param');
-        if (typeof depth != 'number') throw new Error('depth required');
-
-        let triangles: Triangle[] = [];
-        for (const triangle of triangleArr) {
-            triangles = triangles.concat(triangle.generateSubTriangles());
-        }
-        return this.getOnlyDeepestSubTriangles(triangles, depth - 1);
-    }
-
     /**
      * @returns sub triangle that includes point
      */
@@ -113,7 +84,10 @@ export class Triangle {
             if (tri.includesPoint(p)) return tri;
         }
         throw new Error(
-            'getSubTriangleContainingPoint(): failed to get sub triangle including point'
+            'getSubTriangleContainingPoint(): failed to get sub triangle including point, if youre reading this, please report to github, data: ' +
+            '\n-------------------------' +
+            '\nsubtris:\n\n' + inspect(subTris, undefined, null, true) +
+            '\n-------------------------'
         );
     }
 
@@ -126,130 +100,34 @@ export class Triangle {
         const intersection = this.getIntersection(p);
 
         // check if intersection on opposite side (check lat & lon?)
-        if (p.isOnOppositeSide(intersection)) {
-            console.log('point on opposite side');
-            return false;
-        }
+        if (p.isOnOppositeSide(intersection)) return false;
 
-        if (!intersection.isValid()) {
-            console.log('point invalid');
-            return false;
-        }
+        if (!intersection.isValid()) return false;
 
         const thisArea = this.getArea();
-        console.log('this area: ' + thisArea);
 
-        // if any area is bigger than thisArea it means point outside of triangle
+        // if any sub tri area is bigger than thisArea it means point outside of triangle
         const pABArea = new Triangle(this.A, this.B, intersection).getArea();
-        if (pABArea > thisArea + 0.01) {
-            console.log('pABArea bigger than this area');
-            return false;
-        }
+        if (pABArea > thisArea + 0.01) return false;
+
         const pBCArea = new Triangle(intersection, this.B, this.C).getArea();
-        if (pBCArea > thisArea + 0.01) {
-            console.log('pBCArea bigger than this area');
-            return false;
-        }
+        if (pBCArea > thisArea + 0.01) return false;
+
         const pCAArea = new Triangle(this.A, intersection, this.C).getArea();
-        if (pCAArea > thisArea + 0.01) {
-            console.log('pCAArea bigger than this area');
-            return false;
-        }
+        if (pCAArea > thisArea + 0.01) return false;
+
 
         const combinedArea = pABArea + pBCArea + pCAArea;
 
-        const areasEqual =
-            Utilz.roundNum(thisArea) === Utilz.roundNum(combinedArea);
+        const roundedNums = Utilz.roundNums(thisArea, combinedArea)
+        const areasEqual = roundedNums[0] === roundedNums[1];
 
-        console.log(
-            '\nthisArea: ' +
-            Utilz.roundNum(thisArea) +
-            '\ncombined area: ' +
-            Utilz.roundNum(combinedArea) +
-            '\nareas equal?: ' +
-            areasEqual +
-            '\n--------------------'
-        );
-
-        // todo: might have to round a bit if calculations have rounding error,
-        // but then need to consider that amount rounded off may mean that point
-        // is in triangle next to this one by a very slight amount (rare edge case?)
+        // TODO: can rounding error cause false positive?
         return areasEqual;
     }
 
-    // TODO: what the hell man, rounding errors? (point from coordinates 27, 0 fails for some reason)
-    includesPointV(p: Point): boolean {
-        const intersection = this.getIntersection(p);
-        // intersection.draw()
-        // check if intersection on opposite side (check lat & lon?)
-        if (p.isOnOppositeSide(intersection)) {
-            console.log('point on opposite side');
-            return false;
-        }
-        if (!intersection.isValid()) {
-            console.log('point invalid');
-            return false;
-        }
-
-        const vecA = new Vector(this.A);
-        const vecB = new Vector(this.B);
-        const vecC = new Vector(this.C);
-
-        const includesPoint =
-            Vector.sameSide(vecA, vecB, vecC, intersection) &&
-            Vector.sameSide(vecC, vecA, vecB, intersection) &&
-            Vector.sameSide(vecB, vecC, vecA, intersection);
-        console.log('\n\nTriangle.includesPoint(): ' + includesPoint);
-        return includesPoint;
-    }
-
-    includesPointBarycentric(p: Point): boolean {
-        const vecA = new Vector(this.A);
-        const vecB = new Vector(this.B);
-        const vecC = new Vector(this.C);
-        const vecP = new Vector(p);
-
-        const vec0 = vecC.subtract(vecA);
-        const vec1 = vecB.subtract(vecA);
-        const vec2 = vecP.subtract(vecA);
-
-        // // Compute vectors
-        // v0 = C - A
-        // v1 = B - A
-        // v2 = P - A
-
-        const dot00 = vec0.dotProduct(vec0);
-        const dot01 = vec0.dotProduct(vec1);
-        const dot02 = vec0.dotProduct(vec2);
-        const dot11 = vec1.dotProduct(vec1);
-        const dot12 = vec1.dotProduct(vec2);
-
-        // // Compute dot products
-        // dot00 = dot(v0, v0)
-        // dot01 = dot(v0, v1)
-        // dot02 = dot(v0, v2)
-        // dot11 = dot(v1, v1)
-        // dot12 = dot(v1, v2)
-
-        const invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
-        const u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-        const v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-
-        // // Compute barycentric coordinates
-        // invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
-        // u = (dot11 * dot02 - dot01 * dot12) * invDenom
-        // v = (dot00 * dot12 - dot01 * dot02) * invDenom
-
-        console.log('\n\nv: ' + v + ', u: ' + u + '\n\n');
-
-        return u >= 0 && v >= 0 && u + v < 1;
-
-        // // Check if point is in triangle
-        // return (u >= 0) && (v >= 0) && (u + v < 1)
-    }
-
     /**
-     * returns cross product / 2 which is area of triangle
+     * returns cross product ÷ 2 which is area of triangle
      *
      * @returns area of triangle
      */
@@ -274,6 +152,7 @@ export class Triangle {
      * @returns point along line including origin and p that intersects this triangle's plane
      */
     getIntersection(p: Point): Point {
+
         // components of normal vector to plane containing this triangle's A, B, and C points
         const l = // x component
             (this.A.y - this.B.y) * (this.C.z - this.B.z) -
@@ -285,7 +164,7 @@ export class Triangle {
             (this.A.x - this.B.x) * (this.C.y - this.B.y) -
             (this.C.x - this.B.x) * (this.A.y - this.B.y);
 
-        // finds v (used to find point along vector from point p on plane)
+        // finds v (variable - used to find point along vector from point p on plane)
         const vNumer = l * this.A.x + m * this.A.y + n * this.A.z;
         const vDenom = l * p.x + m * p.y + n * p.z;
         const v = vNumer / vDenom;
@@ -298,14 +177,9 @@ export class Triangle {
         return Point.fromCart(x, y, z);
     }
 
-    //
-
     /**
-     * p5JS specific code below
+     * sets midpoints between each vertex that are also on sphere
      */
-
-    //
-
     calculateSideCenterPoints() {
         this.aMidpoint = Point.centerPoint(this.B, this.C);
 
@@ -319,5 +193,61 @@ export class Triangle {
 
         this.center = Point.fromCart(avgX, avgY, avgZ);
     }
-
 }
+
+
+
+
+
+/**
+ * BELOW ARE OTHER METHODS FOR CHECKING IF POINT IN TRIANGLE,
+ *
+ * IF YOURE READING THIS AND THINK ONE OF THESE HAS LESS ROUNDING ERROR,
+ * OR IF THERE'S A BETTER WAY, PLEASE TELL ME, I'LL CHECK IT OUT
+ */
+    // // TODO: what the hell man, rounding errors? (point from coordinates (27, 0) fails for some reason)
+    //.
+    //
+    // -------------------------------------------------- ORTHOGONAL VECTORS
+    // includesPointV(p: Point): boolean {
+    //     const intersection = this.getIntersection(p);
+
+    //     if (p.isOnOppositeSide(intersection)) return false;
+
+    //     if (!intersection.isValid()) return false;
+
+    //     const vecA = new Vector(this.A);
+    //     const vecB = new Vector(this.B);
+    //     const vecC = new Vector(this.C);
+
+    //     const includesPoint =
+    //         Vector.sameSide(vecA, vecB, vecC, intersection) &&
+    //         Vector.sameSide(vecC, vecA, vecB, intersection) &&
+    //         Vector.sameSide(vecB, vecC, vecA, intersection);
+    //     return includesPoint;
+    // }
+    //
+    // 
+    // -------------------------------------------------- BARYCENTRIC
+    // includesPointBarycentric(p: Point): boolean {
+    //     const vecA = new Vector(this.A);
+    //     const vecB = new Vector(this.B);
+    //     const vecC = new Vector(this.C);
+    //     const vecP = new Vector(p);
+
+    //     const vec0 = vecC.subtract(vecA);
+    //     const vec1 = vecB.subtract(vecA);
+    //     const vec2 = vecP.subtract(vecA);
+
+    //     const dot00 = vec0.dotProduct(vec0);
+    //     const dot01 = vec0.dotProduct(vec1);
+    //     const dot02 = vec0.dotProduct(vec2);
+    //     const dot11 = vec1.dotProduct(vec1);
+    //     const dot12 = vec1.dotProduct(vec2);
+
+    //     const invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    //     const u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    //     const v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    //     return u >= 0 && v >= 0 && u + v < 1;
+    // }

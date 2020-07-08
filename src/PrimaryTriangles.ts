@@ -1,9 +1,13 @@
+import { inspect } from 'util';
+
 import { Point } from './Point';
 import { Triangle } from './Triangle';
+import { Utilz } from './Utilz';
+
 
 export class PrimaryTriangles {
 
-    tris:Triangle[];
+    tris: Triangle[];
 
     constructor() {
         this.tris = PrimaryTriangles.generatePrimaryIcosahedronTriangles();
@@ -84,9 +88,11 @@ export class PrimaryTriangles {
             triNumsToCheck = [16, 17, 18, 19, 20];
         } else
             throw new Error(
-                'invalid coordinates (probably not between [-90,90] for lat and [-180,180] lon, coordinates: latitude: ' +
+                'invalid coordinates (probably not between [-90,90] for lat and [-180,180] lon' +
+                '\nprovided coordinates:' +
+                '\nlatitude: ' +
                 p.lat +
-                'longitude: ' +
+                '\nlongitude: ' +
                 p.lon
             );
 
@@ -104,33 +110,34 @@ export class PrimaryTriangles {
     _checkIfPointInTriangles(p: Point, triNums: number[]): Triangle {
         for (const num of triNums) {
             const tri: Triangle = this.tris[num - 1];
-            // console.log(tri);
             const includesPoint = tri.includesPoint(p);
-            console.log(
-                'triangle number ' + tri.pos + ' includes point: ' + includesPoint
-            );
             if (includesPoint) return tri;
         }
         throw new Error(
-            '_checkIfPointInTriangles(): failed to find triangle, nums: ' + triNums
+            'v(): failed to get primary triangle including point, if youre reading this, please report to github, data: ' +
+            '\n-------------------------' +
+            '\npoint:\n\n' + inspect(p, undefined, null, true) +
+            '\n-------------------------' +
+            '\ntri nums:\n\n' + inspect(triNums, undefined, null, true) +
+            '\n-------------------------' +
+            '\nthis.tris:\n\n' + inspect(this.tris, undefined, null, true) +
+            '\n-------------------------'
         );
     }
 
     static generatePrimaryIcosahedronTriangles(): Triangle[] {
-        // behold, the golden ratio (not used for anything, but has to do with icosahedron geometry)
-        // const goldenRatio = (1 + Math.sqrt(5)) / 2;
 
         // angle between xy plane and bottom/top pent base points
         const angle = 26.6;
 
-        // initializes points on top half
+        // points on top pent
         const northPole = Point.fromCoord(90, 0);
         const north0 = Point.fromCoord(angle, 0);
         const north1 = Point.fromCoord(angle, 72);
         const north2 = Point.fromCoord(angle, 144);
         const north3 = Point.fromCoord(angle, -144);
         const north4 = Point.fromCoord(angle, -72);
-        // initializes points on bottom half
+        // points on bottom pent
         const southPole = Point.fromCoord(-90, 0);
         const south0 = Point.fromCoord(-angle, 36);
         const south1 = Point.fromCoord(-angle, 108);
