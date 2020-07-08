@@ -8,7 +8,7 @@
     "lib/**/*"
   ],
   "scripts": {
-    "test": "src/tests/test.ts",
+    "test": "ztest.js",
     "build": "tsc",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
