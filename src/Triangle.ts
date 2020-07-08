@@ -57,9 +57,9 @@ export class Triangle {
      *   /4 \1 /3 \
      *  /____\/____\
      * C     a      B
-     **/
+     */
     generateSubTriangles() {
-        let subTriangles: Triangle[] = [];
+        const subTriangles: Triangle[] = [];
 
         // center sub triangle
         subTriangles.push(
@@ -205,7 +205,7 @@ export class Triangle {
  * OR IF THERE'S A BETTER WAY, PLEASE TELL ME, I'LL CHECK IT OUT
  */
     // // TODO: what the hell man, rounding errors? (point from coordinates (27, 0) fails for some reason)
-    //.
+    //
     //
     // -------------------------------------------------- ORTHOGONAL VECTORS
     // includesPointV(p: Point): boolean {
@@ -226,7 +226,7 @@ export class Triangle {
     //     return includesPoint;
     // }
     //
-    // 
+    //
     // -------------------------------------------------- BARYCENTRIC
     // includesPointBarycentric(p: Point): boolean {
     //     const vecA = new Vector(this.A);

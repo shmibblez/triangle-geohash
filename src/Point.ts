@@ -1,4 +1,4 @@
-import {Conzts} from './conzts';
+import {Conzts} from './Conzts';
 import {Utilz} from './Utilz';
 
 /**
@@ -25,7 +25,7 @@ export class Point {
         this.x = x;
         this.y = y;
         this.z = z;
-        if (angleUnit == 'rad') {
+        if (angleUnit === 'rad') {
             this.lat = lat;
             this.lon = lon;
         } else {

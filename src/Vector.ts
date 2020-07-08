@@ -56,6 +56,6 @@ export class Vector {
   //   const vec2 = v2.subtract(v1).crossProduct(v3.subtract(v1));
 
   //   // TODO: round depending on digits, so more precision with smaller numbers
-  //.  const sameSide = vec1.dotProduct(vec2) + 0.001 >= 0;
+  //   const sameSide = vec1.dotProduct(vec2) + 0.001 >= 0;
   //   return sameSide;
   // }
