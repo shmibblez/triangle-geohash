@@ -3,8 +3,6 @@ import { Triangle } from './Triangle';
 import { PrimaryTriangles } from './PrimaryTriangles';
 
 
-// TODO: add resolution class that has approximate km as property names and depth as values, like for example
-
 /**
  * approximate triangle side lengths, rounded down, 
  * 
