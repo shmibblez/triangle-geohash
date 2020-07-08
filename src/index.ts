@@ -3,32 +3,6 @@ import { Triangle } from './Triangle';
 import { PrimaryTriangles } from './PrimaryTriangles';
 
 
-/**
- * approximate triangle side lengths, rounded down,
- *
- * underscore is used as decimal point
- */
-// class Depths {
-//     static get km7050(): 0 { return 0 }
-//     static get km3525(): 1 { return 1 }
-//     static get km1762(): 2 { return 2 }
-//     static get km881(): 3 { return 3 }
-//     static get km440(): 4 { return 4 }
-//     static get km220(): 5 { return 5 }
-//     static get km110(): 6 { return 6 }
-//     static get km55(): 7 { return 7 }
-//     static get km27(): 8 { return 8 }
-//     static get km13(): 9 { return 9 }
-//     static get km6(): 10 { return 10 }
-//     static get km3(): 11 { return 11 }
-//     static get km1(): 12 { return 12 }
-//     static get km0_86(): 13 { return 13 }
-//     static get km0_43(): 14 { return 14 }
-//     static get km0_22(): 15 { return 15 }
-//     static get km0_11(): 16 { return 16 }
-//     static get km0_05(): 17 { return 17 }
-// }
-
 export class TriangleGeohash {
 
     /**

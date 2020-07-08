@@ -1,5 +1,5 @@
-import {Conzts} from './Conzts';
-import {Utilz} from './Utilz';
+import { Conzts } from './Conzts';
+import { Utilz } from './Utilz';
 
 /**
  * Point class, you could say this comment is pointless
@@ -11,6 +11,7 @@ export class Point {
     z: number;
     lat: number;
     lon: number;
+
     /**
      * point constructor, degrees is default angle type
      */
